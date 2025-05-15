@@ -20,6 +20,7 @@ export default function Layout() {
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="encomenda" options={{ headerShown: false }} />
             <Stack.Screen name="os" options={{ headerShown: false }} />
+            <Stack.Screen name="comprovante" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
         </SafeAreaView>

@@ -14,7 +14,7 @@ export default function HomeScreen() {
         <ButtonScreen
           title="Gerenciar O.S"
           subtitle=""
-          icon="time-outline"
+          icon="file-tray-full-outline"
           colorIcon="#1C974B"
           backgroundColor="#1C974B"
           route="/os/listarOs"

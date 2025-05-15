@@ -15,7 +15,7 @@ import {
 type Props = {
   title?: string;
   description?: string;
-  osField: string; // campo no contexto Os para armazenar as fotos
+  osField: string;
 };
 
 export default function MultiCameraInput({
