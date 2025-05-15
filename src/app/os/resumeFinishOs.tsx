@@ -1,9 +1,13 @@
+import { initializeDatabase } from "@/database/initializeDatabase";
+import { salvarOS } from "@/database/useOsDatabase";
 import BottomButtonFinish from "@components/buttonFinishOs";
 import BackHeader from "@components/ui/HeaderBack";
 import { Ionicons } from "@expo/vector-icons";
 import { useOs } from "@src/context/OsContext";
-import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
+  Alert,
   FlatList,
   Image,
   Modal,
@@ -15,30 +19,29 @@ import {
 } from "react-native";
 
 export default function ResumoOS() {
-  const { os } = useOs();
-  const [imagemSelecionada, setImagemSelecionada] = useState<string | null>(
-    null
-  );
+  const { os, resetOs } = useOs();
+  const router = useRouter();
+  const [imagemSelecionada, setImagemSelecionada] = useState<string | null>(null);
 
-  const renderFotos = (fotos: string | string[] | undefined) => {
-    if (!fotos) return <Text style={styles.fotoEmpty}>Sem fotos</Text>;
+  useEffect(() => {
+    initializeDatabase();
+  }, []);
 
-    const lista = Array.isArray(fotos) ? fotos : [fotos];
+  const handleFinalizar = async () => {
+    try {
+      const dadosComData = {
+        ...os,
+        createdAt: new Date().toISOString(),
+      };
 
-    return (
-      <FlatList
-        data={lista}
-        keyExtractor={(item, index) => `${item}-${index}`}
-        horizontal
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => setImagemSelecionada(item)}>
-            <Image source={{ uri: item }} style={styles.fotoThumb} />
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.fotoScrollContainer}
-        showsHorizontalScrollIndicator={false}
-      />
-    );
+      await salvarOS(dadosComData);
+      resetOs();
+      Alert.alert("Sucesso", "Ordem de Serviço salva com sucesso!");
+      router.replace("/");
+    } catch (error) {
+      console.error("Erro ao salvar OS:", error);
+      Alert.alert("Erro", "Não foi possível salvar a Ordem de Serviço.");
+    }
   };
 
   const renderItem = (label: string, value?: string) => (
@@ -65,6 +68,29 @@ export default function ResumoOS() {
           </View>
         ))}
       </View>
+    );
+  };
+
+  const renderFotos = (fotos: string | string[] | undefined) => {
+    if (!fotos || (Array.isArray(fotos) && fotos.length === 0)) {
+      return <Text style={styles.fotoEmpty}>Sem fotos</Text>;
+    }
+
+    const lista = Array.isArray(fotos) ? fotos : [fotos];
+
+    return (
+      <FlatList
+        data={lista}
+        keyExtractor={(item, index) => `${item}-${index}`}
+        horizontal
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => setImagemSelecionada(item)}>
+            <Image source={{ uri: item }} style={styles.fotoThumb} />
+          </TouchableOpacity>
+        )}
+        contentContainerStyle={styles.fotoScrollContainer}
+        showsHorizontalScrollIndicator={false}
+      />
     );
   };
 
@@ -120,7 +146,7 @@ export default function ResumoOS() {
         </View>
       </Modal>
 
-      <BottomButtonFinish onFinish={() => console.log("Finalizado!")} />
+      <BottomButtonFinish onFinish={handleFinalizar} />
     </View>
   );
 }

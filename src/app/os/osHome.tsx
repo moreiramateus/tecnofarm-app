@@ -1,49 +1,34 @@
+import BottomButtonBack from "@/components/ui/ButtonBarBackgroundBack";
+import ButtonScreen from "@/components/ui/ButtonScreen";
+import BackHeader from "@/components/ui/HeaderBack";
 import HeaderInformation from "@components/InformationHeader";
-import ButtonScreen from "@components/ui/ButtonScreen";
-import Header from "@components/ui/TabHomeScreen";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
 export default function HomeScreen() {
   return (
-    <View style = {styles.container}>
-      <Header />
+    <View style={styles.container}>
+    <BackHeader/>
       <HeaderInformation />
       <View style={styles.grid}>
         <ButtonScreen
-          title="Entrada de equipamentos"
+          title="Gerenciar O.S"
           subtitle=""
-          icon="add-circle-outline"
+          icon="time-outline"
           colorIcon="#1C974B"
           backgroundColor="#1C974B"
-          route="/"
+          route="/os/listarOs"
         />
-
         <ButtonScreen
-          title="Ordem de Serviço"
+          title="Registrar O.S"
           subtitle=""
           icon="clipboard-outline"
           colorIcon="#1C974B"
           backgroundColor="#1C974B"
-          route="/os/osHome"
-        />
-
-        <ButtonScreen
-          title="Comprovantes"
-          subtitle=""
-          icon="card-outline"
-          colorIcon="#1C974B"
-          backgroundColor="#1C974B"
-        />
-
-        <ButtonScreen
-          title="Ocorrências"
-          subtitle=""
-          icon="warning-outline"
-          colorIcon="#FC1723"
-          backgroundColor="#FC1723"
+          route="/os/inputList"
         />
       </View>
+      <BottomButtonBack/>
     </View>
   );
 }
@@ -54,6 +39,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F9FFF5", // escuro como na imagem
   },
   grid: {
+    flex:1,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-around",

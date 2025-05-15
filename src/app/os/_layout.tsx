@@ -47,6 +47,10 @@ export default function OsLayout() {
             name="addServiceList"
             options={{ title: "Adicionar Serviços" }}
           />
+           <Stack.Screen
+            name="listarOs"
+            options={{ title: "ListarOs" }}
+          />
         </Stack>
       </UsuariosProvider>
     </OsProvider>

@@ -43,7 +43,9 @@
     "expo-print": "~14.1.4",
     "expo-camera": "~16.1.6",
     "expo-image-manipulator": "~13.1.7",
-    "expo-location": "~18.1.5"
+    "expo-location": "~18.1.5",
+    "expo-sharing": "~13.1.5",
+    "@react-native-community/datetimepicker": "8.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
