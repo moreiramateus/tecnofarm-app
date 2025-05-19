@@ -78,7 +78,7 @@ export default function receiptPaid() {
         keyExtractor={(_, index) => index.toString()}
         contentContainerStyle={styles.contentContainer}
       />
-      <BottomButtons onNext={() => router.push("/")} />
+      <BottomButtons onNext={() => router.push("./cameraReceipt")} />
     </View>
   );
 }

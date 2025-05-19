@@ -17,7 +17,7 @@ export default function ReceiptLayout() {
         }}
       >
         <Stack.Screen
-          name="homeRecepeit"
+          name="homeReceipt"
           options={{
             title: "Home Comprovantes",
           }}
@@ -45,6 +45,12 @@ export default function ReceiptLayout() {
           name="reimbursement"
           options={{
             title: "Reembolso",
+          }}
+        />
+        <Stack.Screen
+          name="cameraReceipt"
+          options={{
+            title: "Camera",
           }}
         />
       </Stack>

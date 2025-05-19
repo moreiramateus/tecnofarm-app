@@ -34,7 +34,7 @@ export default function HomeScreen() {
           icon="receipt-outline"
           colorIcon="#1C974B"
           backgroundColor="#1C974B"
-           route="/comprovante/homeRecepeit"
+           route="/comprovante/homeReceipt"
         />
 
         <ButtonScreen
