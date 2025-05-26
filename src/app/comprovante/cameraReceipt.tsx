@@ -1,172 +1,40 @@
+import MultiCameraInputGlobal from "@/components/cameraGlobalInput";
+import BottomButtons from "@/components/ui/ButtonBarBackground";
+import BackHeader from "@/components/ui/HeaderBack";
 import { useReceipt } from "@/context/ReceiptContext";
-import { Ionicons } from "@expo/vector-icons";
-import { Camera, CameraView } from "expo-camera";
-import * as ImageManipulator from "expo-image-manipulator";
-import React, { useEffect, useRef, useState } from "react";
-import {
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { useRouter } from "expo-router";
+import React from "react";
+import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
-type Props = {
-  title?: string;
-  description?: string;
-  receiptField: string;
-};
-
-export default function MultiCameraInput({
-  title = "Fotos do Recibo",
-  description = "Tire uma ou mais fotos do equipamento ou local",
-  receiptField,
-}: Props) {
-  const { setReceipt } = useReceipt();
-  const cameraRef = useRef<CameraView>(null);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [photos, setPhotos] = useState<string[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
-
-  useEffect(() => {
-    setReceipt({ [receiptField]: photos });
-  }, [photos]);
-
-  const handleTakePicture = async () => {
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync({
-        skipProcessing: true,
-      });
-
-      const manipResult = await ImageManipulator.manipulateAsync(
-        photo.uri,
-        [{ resize: { width: 800 } }],
-        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
-      );
-
-      setPhotos((prev) => [...prev, manipResult.uri]);
-    }
-  };
-
-  const handleRemovePhoto = (uri: string) => {
-    setPhotos((prev) => prev.filter((item) => item !== uri));
-  };
-
-  if (hasPermission === null) return <Text>Solicitando permissão...</Text>;
-  if (hasPermission === false) return <Text>Permissão da câmera negada.</Text>;
+export default function CameraPage() {
+  const { receipt, setReceipt } = useReceipt();
+  const router = useRouter();
 
   return (
-    <View style={styles.wrapper}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
-
-      <View style={styles.cameraContainer}>
-        <CameraView style={styles.camera} facing="back" ref={cameraRef} />
-        <TouchableOpacity
-          style={styles.captureButton}
-          onPress={handleTakePicture}
-        >
-          <Ionicons name="camera-outline" size={24} color="#fff" />
-          <Text style={styles.captureText}>Tirar foto</Text>
-        </TouchableOpacity>
-      </View>
-
-      {photos.length > 0 && (
-        <View style={styles.galleryContainer}>
-          <Text style={styles.galleryTitle}>Fotos tiradas:</Text>
-          <FlatList
-            horizontal
-            data={photos}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => (
-              <View style={styles.thumbnailWrapper}>
-                <Image source={{ uri: item }} style={styles.thumbnail} />
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={() => handleRemovePhoto(item)}
-                >
-                  <Ionicons name="close-circle" size={20} color="#fff" />
-                </TouchableOpacity>
-              </View>
-            )}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-      )}
-    </View>
+    <SafeAreaView style={styles.container}>
+      <BackHeader />
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <MultiCameraInputGlobal
+          useContextHook={() => ({
+            fotosRecibo: receipt?.fotoReceipt || [],
+            set: (data) => setReceipt({ ...receipt, ...data }),
+          })}
+          field="fotoReceipt"
+          title="Fotos do Recibo"
+          description="Tire fotos da máquina, local ou comprovantes"
+        />
+      </ScrollView>
+      <BottomButtons onNext={() => router.push("/comprovante/resumeReceipt")} />
+    </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
-  wrapper: {
-    padding: 15,
-    backgroundColor: "#fff",
+  container: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
   },
-  title: {
-    fontSize: 30,
-    marginBottom: 6,
-  },
-  description: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 16,
-  },
-  cameraContainer: {
-    position: "relative",
-    borderRadius: 12,
-    overflow: "hidden",
-    marginBottom: 20,
-  },
-  camera: {
-    width: "100%",
-    height: 350,
-  },
-  captureButton: {
-    position: "absolute",
-    bottom: 12,
-    alignSelf: "center",
-    backgroundColor: "#1976D2",
-    borderRadius: 24,
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  captureText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  galleryContainer: {
-    marginTop: 10,
-  },
-  galleryTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  thumbnailWrapper: {
-    position: "relative",
-    marginRight: 12,
-  },
-  thumbnail: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-  },
-  deleteButton: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    backgroundColor: "#D32F2F",
-    borderRadius: 10,
-    padding: 2,
+  scroll: {
+    padding: 20,
+    gap: 20,
   },
 });

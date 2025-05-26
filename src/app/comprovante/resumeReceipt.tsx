@@ -1,9 +1,9 @@
-import { initializeDatabaseOs } from "@/database/initializeDatabase";
-import { salvarOS } from "@/database/useOsDatabase";
+import { initializeDatabaseReceits } from "@/database/initializeDatabase";
+import { saveReceipt } from "@/database/useReceiptDatabase";
 import BottomButtonFinish from "@components/buttonFinishOs";
 import BackHeader from "@components/ui/HeaderBack";
 import { Ionicons } from "@expo/vector-icons";
-import { useOs } from "@src/context/OsContext";
+import { useReceipt } from "@src/context/ReceiptContext";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -18,29 +18,31 @@ import {
   View,
 } from "react-native";
 
-export default function ResumoOS() {
-  const { os, resetOs } = useOs();
+export default function ResumoReceipt() {
+  const { receipt, resetReceipt } = useReceipt();
   const router = useRouter();
-  const [imagemSelecionada, setImagemSelecionada] = useState<string | null>(null);
+  const [imagemSelecionada, setImagemSelecionada] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
-    initializeDatabaseOs();
+    initializeDatabaseReceits();
   }, []);
 
   const handleFinalizar = async () => {
     try {
       const dadosComData = {
-        ...os,
+        ...receipt,
         createdAt: new Date().toISOString(),
       };
 
-      await salvarOS(dadosComData);
-      resetOs();
-      Alert.alert("Sucesso", "Ordem de Serviço salva com sucesso!");
-      router.replace("/");
+      await saveReceipt(dadosComData);
+      resetReceipt();
+      Alert.alert("Sucesso", "Comprovante Salvo com Sucesso");
+      router.replace("/comprovante/homeReceipt");
     } catch (error) {
-      console.error("Erro ao salvar OS:", error);
-      Alert.alert("Erro", "Não foi possível salvar a Ordem de Serviço.");
+      console.error("Erro ao salvar o comprovante:", error);
+      Alert.alert("Erro", "Não foi possível salvar o Comprovante.");
     }
   };
 
@@ -51,27 +53,7 @@ export default function ResumoOS() {
     </View>
   );
 
-  const renderServicosExecutados = () => {
-    if (!os.serviceExecute || os.serviceExecute.length === 0) {
-      return renderItem("Serviços Executados", "Nenhum serviço registrado.");
-    }
-
-    return (
-      <View style={styles.item}>
-        <Text style={styles.label}>Serviços Executados:</Text>
-        {os.serviceExecute.map((servico, index) => (
-          <View key={index} style={styles.servicoItem}>
-            <Text style={styles.servicoTitulo}>• {servico.descricao}</Text>
-            <Text style={styles.servicoDetalhe}>
-              {servico.categoria} | {servico.dataHora}
-            </Text>
-          </View>
-        ))}
-      </View>
-    );
-  };
-
-  const renderFotos = (fotos: string | string[] | undefined) => {
+  const renderFotos = (fotos?: string | string[]) => {
     if (!fotos || (Array.isArray(fotos) && fotos.length === 0)) {
       return <Text style={styles.fotoEmpty}>Sem fotos</Text>;
     }
@@ -100,30 +82,15 @@ export default function ResumoOS() {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Resumo da Ordem de Serviço</Text>
 
-        {renderItem("Cliente/Responsável", os.client)}
-        {renderItem("Marca", os.brand)}
-        {renderItem("Tipo de Máquina/Equipamento", os.typeMachine)}
-        {renderItem("Modelo da Máquina/Modelo do Equipamento", os.modelMachine)}
-        {renderItem("Número da Frota / Serial", os.frotaNumber)}
-        {renderItem("Tipo de Serviço", os.typeService)}
-        {renderItem("Tipo de Manutenção", os.maintanceType)}
-        {renderItem("Responsável Técnico", os.technicalManager)}
-        {renderItem("Técnicos Auxiliares", os.technicalAssistent)}
-        {renderItem("Localização", os.location)}
-        {renderItem("Localização Abertura O.S", os.geolocalizacao)}
-        {renderItem("Hora de Início", os.horaInicio)}
-        {renderItem("Hora de Fim", os.horaFim)}
-        {renderItem("Observação", os.observationOs)}
-        {renderServicosExecutados()}
+        {renderItem("Categoria da Despesa", receipt.category)}
+        {renderItem("Valor Pago", receipt.paidValue)}
+        {renderItem("Forma de Pagamento", receipt.paymentMethod)}
+        {renderItem("Descrição", receipt.description)}
+        {renderItem("Usuário Responsável", receipt.userResponsible)}
 
         <View style={styles.item}>
-          <Text style={styles.label}>Fotos do Início:</Text>
-          {renderFotos(os.fotoOS)}
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Fotos da Finalização:</Text>
-          {renderFotos(os.fotoOSFinish)}
+          <Text style={styles.label}>Fotos do Comprovante:</Text>
+          {renderFotos(receipt.fotoReceipt)}
         </View>
       </ScrollView>
 
@@ -205,18 +172,5 @@ const styles = StyleSheet.create({
     top: 40,
     right: 20,
     zIndex: 2,
-  },
-  servicoItem: {
-    marginBottom: 10,
-    paddingLeft: 10,
-  },
-  servicoTitulo: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#444",
-  },
-  servicoDetalhe: {
-    fontSize: 14,
-    color: "#666",
   },
 });

@@ -1,7 +1,7 @@
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ["babel-preset-expo"], // já inclui o necessário para expo-router
+    presets: ["babel-preset-expo"],
     plugins: [
       [
         "module-resolver",
@@ -15,7 +15,7 @@ module.exports = function (api) {
             "@context": "./src/context",
             "@utils": "./src/utils",
             "@services": "./src/services",
-            "@src": "./src"
+            "@src": "./src",
           },
         },
       ]

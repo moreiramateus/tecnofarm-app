@@ -1,25 +1,12 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 type ReceiptData = {
-  brand?: string;
-  typeMachine?: string;
-  typeService?: string;
-  client?: string;
-  frotaNumber?: string;
-  modelMachine?: string;
-  modelEquipament?: string;
-  brandEquipament?: string;
-  technicalManager?: string;
-  technicalAssistent?: string;
+  category?: string;
   fotoReceipt?: string | string[];
-  fotoReceiptFinish?: string | string[];
-  horaInicio?: string;
-  horaFim?: string;
-  serviceExecute?: string[];
-  observationReceipt?: string;
-  location?: string;
-  geolocalizacao?: string;
-  maintanceType?: string;
+  paidValue?: string;
+  paymentMethod?: string;
+  description?: string;
+  userResponsible?: string;
 };
 
 type ReceiptContextType = {

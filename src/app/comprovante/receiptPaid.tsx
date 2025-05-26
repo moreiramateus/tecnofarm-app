@@ -1,71 +1,74 @@
-import LocationCapture from "@components/locationCapture";
+import InputTextSelect from "@/components/ui/inputTextSelectReceiptContext";
 import BottomButtons from "@components/ui/ButtonBarBackground";
 import BackHeader from "@components/ui/HeaderBack";
-import InputTextSelect from "@components/ui/inputTextSelect";
 import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
-export default function receiptPaid() {
+type CampoInput = {
+  label: string;
+  placeholder: string;
+  receiptField: string;
+  options?: string[];
+  inputType?: "text" | "money";
+};
+
+export default function ReceiptPaid() {
   const router = useRouter();
 
-  const campos = [
+  const campos: CampoInput[] = [
     {
       label: "Categoria da Despesa",
       placeholder: "Alimentação, transporte, hospedagem...",
-      osField: "",
+      receiptField: "category",
       options: ["Alimentação", "Transporte", "Hospedagem"],
     },
     {
       label: "Valor Pago",
       placeholder: "Total da despesa no comprovante...",
-      osField: "",
+      receiptField: "paidValue",
+      inputType: "money",
     },
     {
       label: "Forma de Pagamento",
       placeholder: "Dinheiro, Cartão de crédito, Pix...",
-      osField: "",
+      receiptField: "paymentMethod",
       options: [
         "Dinheiro",
         "Cartão de Credito",
         "Cartão de Debito",
-        "Transferência, Pix",
+        "Transferência",
+        "Pix",
       ],
     },
     {
       label: "Descrição",
       placeholder: "Detalhes adicionais sobre a despesa...",
-      osField: "",
-      options: ["Corretiva", "Preventiva", "Preditiva"],
+      receiptField: "description",
+      options: [""],
     },
     {
       label: "Usuário Responsável",
       placeholder: "Quem realizou a compra ou despesa...",
-      osField: "",
+      receiptField: "userResponsible",
       options: [],
-    },
-    {
-      label: "Localização",
-      placeholder: "Nome do estabelecimento...",
-      osField: "location",
     },
   ];
 
   const renderInputs = () => (
     <View style={styles.form}>
       <Text style={styles.title}>Preencha os campos</Text>
-
       {campos.map((campo, index) => (
         <View style={styles.input} key={index}>
           <InputTextSelect
             label={campo.label}
             placeholder={campo.placeholder}
-            options={campo.options ?? []} // garante array vazio se undefined
-            osField={campo.osField as any}
+            options={campo.options ?? []}
+            receiptField={campo.receiptField as any}
+            inputType={campo.inputType ?? "text"}
           />
         </View>
       ))}
-      <LocationCapture />
     </View>
   );
 
@@ -78,7 +81,7 @@ export default function receiptPaid() {
         keyExtractor={(_, index) => index.toString()}
         contentContainerStyle={styles.contentContainer}
       />
-      <BottomButtons onNext={() => router.push("./cameraReceipt")} />
+      <BottomButtons onNext={() => router.push("/comprovante/cameraReceipt")} />
     </View>
   );
 }
@@ -96,6 +99,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     marginBottom: 20,
+    fontWeight: "bold",
   },
   input: {
     marginBottom: 20,

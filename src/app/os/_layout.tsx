@@ -32,7 +32,8 @@ export default function OsLayout() {
           />
           <Stack.Screen
             name="addTechnical"
-            options={{ title: "Adicionar Técnico" }}d
+            options={{ title: "Adicionar Técnico" }}
+            d
           />
           <Stack.Screen
             name="cameraInitialOs"
@@ -47,10 +48,7 @@ export default function OsLayout() {
             name="addServiceList"
             options={{ title: "Adicionar Serviços" }}
           />
-           <Stack.Screen
-            name="listarOs"
-            options={{ title: "ListarOs" }}
-          />
+          <Stack.Screen name="listarOs" options={{ title: "ListarOs" }} />
         </Stack>
       </UsuariosProvider>
     </OsProvider>
